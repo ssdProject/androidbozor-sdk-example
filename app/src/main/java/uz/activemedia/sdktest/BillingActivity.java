@@ -33,12 +33,10 @@ import uz.ssd.androidbozor.services.billing.v1.TransactionDetails;
 
 public class BillingActivity extends Activity {
     // SAMPLE APP CONSTANTS
-    private static final String ACTIVITY_NUMBER = "activity_num";
-    private static final String LOG_TAG         = "iabv3";
+    private static final String LOG_TAG         = "billing";
 
-    // PRODUCT & SUBSCRIPTION IDS
+    // PRODUCT IDS
     private static final String PRODUCT_ID      = "product_500_coin";
-    private static final String SUBSCRIPTION_ID = "subscription_1";
 
     /**
      * BASE64 encoded public key for the application which is generated at Developer Console.
@@ -54,113 +52,12 @@ public class BillingActivity extends Activity {
     private boolean readyToPurchase = false;
     private BillingProcessor bp;
 
-
-    private void initializeBilling() {
-        bp = new BillingProcessor(this, BASE64_PUBLIC_KEY, ENCRYPT_SALT, new IBillingHandler() {
-            /**
-             * BillingProcessor connected to billing service and ready to handle purchase requests,
-             */
-            @Override
-            public void onBillingInitialized() {
-                showToast("onBillingInitialized");
-                readyToPurchase = true;
-                updateTextViews();
-            }
-
-            /**
-             * BillingProcessor failed to connect/execute.
-             * @param errorCode Error code
-             *                  1 - Purchase process cancelled by user
-             *                  2 - Billing server unavailable
-             *                  3 - Billing service unavailable
-             *                  4 - Item unavailable
-             *                  6 - Fatal error while communicating with API
-             *                  7 - Item already owned
-             *                  8 - Item not owned
-             *                  100 - Failed while loading owned purchases
-             *                  101 - Failed communicating with billing service
-             *                  102 - Invalid signature
-             *                  110 - Other errors
-             *                  113 - AndroidBozor service not installed
-             * @param error
-             */
-            @Override
-            public void onBillingError(int errorCode, Throwable error) {
-                showToast("onBillingError: " + Integer.toString(errorCode));
-            }
-
-
-            /**
-             * Triggered after successfully purchase of product, started by bp.purchase(this, productId)
-             * @param productId - Product SKU
-             * @param details - TransactionDetails Object
-             */
-            @Override
-            public void onProductPurchased(String productId, TransactionDetails details) {
-                showToast("onProductPurchased: " + productId);
-                updateTextViews();
-
-                if (productId.equals(PRODUCT_ID)) {
-                    //your logic
-                }
-            }
-
-            /**
-             * Triggered after purchase history restored. All information about owned products are
-             * retrieved and stored locally
-             */
-            @Override
-            public void onPurchaseHistoryRestored() {
-                showToast("onPurchaseHistoryRestored");
-                for (String sku : bp.listOwnedProducts())
-                    Log.d(LOG_TAG, "Owned Managed Product: " + sku);
-                updateTextViews();
-            }
-
-            /**
-             * Triggered after bp.consume(productId) performed.
-             */
-
-            @Override
-            public void onProductConsumed(boolean isSuccess, String productId) {
-                if (isSuccess) {
-                    showToast(productId + " consumed successfully");
-                } else {
-                    showToast(productId + " could not be consumed");
-                }
-                updateTextViews();
-
-                if (productId.equals(PRODUCT_ID)) {
-                    //put your logic
-                }
-            }
-
-
-            /**
-             * Triggered after bp.getPurchaseListingDetails(productId) performed.
-             * @param skuDetails  List of SkuDetails
-             * @param billingErrorCode Billing response code
-             *                         0 - OK
-             *                         2 - Service unavailable
-             *                         6 - Error
-             */
-            @Override
-            public void onSkuDetailsAccepted(List<SkuDetails> skuDetails, int billingErrorCode) {
-                for (SkuDetails d : skuDetails) {
-                    showToast(d.toString());
-                }
-            }
-        });
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_billing);
 
-        TextView title = (TextView) findViewById(R.id.titleTextView);
-
-        initializeBilling();
+        bp = new BillingProcessor(this, BASE64_PUBLIC_KEY, ENCRYPT_SALT, new BillingHandler());
     }
 
     @Override
@@ -231,4 +128,99 @@ public class BillingActivity extends Activity {
         }
     }
 
+    private class BillingHandler implements IBillingHandler{
+        /**
+         * BillingProcessor connected to billing service and ready to handle purchase requests,
+         */
+        @Override
+        public void onBillingInitialized() {
+            showToast("onBillingInitialized");
+            readyToPurchase = true;
+            updateTextViews();
+        }
+
+        /**
+         * BillingProcessor failed to connect/execute.
+         * @param errorCode Error code
+         *                  1 - Purchase process cancelled by user
+         *                  2 - Billing server unavailable
+         *                  3 - Billing service unavailable
+         *                  4 - Item unavailable
+         *                  6 - Fatal error while communicating with API
+         *                  7 - Item already owned
+         *                  8 - Item not owned
+         *                  100 - Failed while loading owned purchases
+         *                  101 - Failed communicating with billing service
+         *                  102 - Invalid signature
+         *                  110 - Other errors
+         *                  113 - AndroidBozor service not installed
+         * @param error
+         */
+        @Override
+        public void onBillingError(int errorCode, Throwable error) {
+            showToast("onBillingError: " + Integer.toString(errorCode));
+        }
+
+
+        /**
+         * Triggered after successfully purchase of product, started by bp.purchase(this, productId)
+         * @param productId - Product SKU
+         * @param details - TransactionDetails Object
+         */
+        @Override
+        public void onProductPurchased(String productId, TransactionDetails details) {
+            showToast("onProductPurchased: " + productId);
+            updateTextViews();
+
+            if (productId.equals(PRODUCT_ID)) {
+                //your logic
+            }
+        }
+
+        /**
+         * Triggered after purchase history restored. All information about owned products are
+         * retrieved and stored locally
+         */
+        @Override
+        public void onPurchaseHistoryRestored() {
+            showToast("onPurchaseHistoryRestored");
+            for (String sku : bp.listOwnedProducts())
+                Log.d(LOG_TAG, "Owned Managed Product: " + sku);
+            updateTextViews();
+        }
+
+        /**
+         * Triggered after bp.consume(productId) performed.
+         */
+
+        @Override
+        public void onProductConsumed(boolean isSuccess, String productId) {
+            if (isSuccess) {
+                showToast(productId + " consumed successfully");
+            } else {
+                showToast(productId + " could not be consumed");
+            }
+            updateTextViews();
+
+            if (productId.equals(PRODUCT_ID)) {
+                //put your logic
+            }
+        }
+
+
+        /**
+         * Triggered after bp.getPurchaseListingDetails(productId) performed.
+         * @param skuDetails  List of SkuDetails
+         * @param billingErrorCode Billing response code
+         *                         0 - OK
+         *                         2 - Service unavailable
+         *                         6 - Error
+         */
+        @Override
+        public void onSkuDetailsAccepted(List<SkuDetails> skuDetails, int billingErrorCode) {
+            for (SkuDetails d : skuDetails) {
+                showToast(d.toString());
+            }
+        }
+    }
 }
