@@ -1,0 +1,38 @@
+apply plugin: 'com.android.application'
+def props = new Properties()
+file("../local.properties").withInputStream { props.load(it) }
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.1"
+    signingConfigs {
+        release {
+            keyAlias 'Homidjonov'
+            keyPassword props.getProperty("signingConfigs.keyPassword")
+            storeFile file(props.getProperty("signingConfigs.storeFile"))
+            storePassword props.getProperty("signingConfigs.storePassword")
+        }
+    }
+    defaultConfig {
+        applicationId "uz.activemedia.sdktest"
+        minSdkVersion 14
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile(name:'androidbozorsdk-release', ext:'aar')
+}
