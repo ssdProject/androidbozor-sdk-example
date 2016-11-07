@@ -51,7 +51,7 @@ public class LicensingActivity extends AppCompatActivity {
         super.onDestroy();
 
         /**
-         * Always call onDestroy to close service connections and stop threads in LicenseChecker
+         * Always call onDestroy to close IPC connections and stop threads in LicenseChecker
          */
         mChecker.onDestroy();
     }
