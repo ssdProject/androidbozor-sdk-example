@@ -24,13 +24,13 @@ AndroidBozor mobile application will handle all checkout processes while purchas
 * Your project's minimum deployment target should be set to Android 3.0 (Honeycomb. API level 11) or later.
 * Add `androidbozorsdk-release.aar` library to your project
     - Copy `androidbozorsdk-release.aar` library into application module's `libs` folder of the project
-    - Update 'build.gradle' for module file in section dependencies
+    - Add dependency into module-level 'build.gradle' file
 ```groovy
     dependencies {
        compile(name:'androidbozorsdk-release', ext:'aar')
     }
 ```
-    - Update `build.gradle` for project file in section repositories 
+    - Add repository into project-level `build.gradle` file
 ```groovy
     allprojects {
             repositories {
