@@ -1,37 +1,38 @@
 # androidbozor-sdk-example
 
-This library `androidbozorsdk-release.aar` consists of helper classes which provides
+This library `androidbozorsdk-release.aar` contains helper classes which provide
 License validation (LicenseChecker) and In-app Purchase gateway (BillingProcessor)
 
 # App Licensing
 
-AndroidBozor offers a Licensing service that lets you enforce licensing for applications
-that you publish on AndroidBoor as paid apps. With this service and provided library your 
-application can query AndroidBozor at runtime to obtain license status for current device, 
-than allow or disallow further use based license status.
+AndroidBozor SDK offers a Licensing service that lets you enforce licensing for applications
+that you publish on AndroidBozor as paid apps. With Licensing service and provided library, your 
+application can query AndroidBozor at runtime to obtain licensing status for the current device, 
+then allow or disallow further use based on the licensing status.
 
 # In-app Purchases
 
-AndroidBozor provides In-app Billing service that lets you sell digital content from inside your applications. 
-You can use the service to sell a virtual content such as game levels or points, premium services and features, and more. 
-You can use In-app Billing to sell products as 
+AndroidBozor SDK provides In-app Billing service that lets you sell digital content from inside your applications. 
+You can use this service to sell a virtual contents such as game levels, or game points, premium services, additional features, and more. You can use In-app Billing to sell products as 
 
 * Standard in-app products (one-time billing, all products are consumable)
 * Subscriptions (recurring billing, subscriptions has not implemented yet on this version of the library)
 
-AndroidBozor mobile application will handle all checkout process while purchasing application or in-app products. 
+AndroidBozor mobile application will handle all checkout processes while purchasing application or making in-app purchases. 
 
 # Global Integration 
-* Your project should build against Android 3.0 SDK (API level 11) at least.
-* Add this `androidbozorsdk-release.aar` library to your project
-    - Copy library into application module's `libs` folder of the projects
-    - Update dependency of application module's `build.gradle`
+**Your project's minimum deployment target should be set to Android 3.0 (API level 11) or later.**
+
+- Add `androidbozorsdk-release.aar` library to `.../app/libs` folder
+- Add the code below to module-level 'build.gradle' file
+    
 ```groovy
     dependencies {
        compile(name:'androidbozorsdk-release', ext:'aar')
     }
 ```
-    - Update repository of project's `build.gradle`
+- Add the code below to project-level `build.gradle` file
+
 ```groovy
     allprojects {
             repositories {
@@ -44,12 +45,11 @@ AndroidBozor mobile application will handle all checkout process while purchasin
 ```
 
 ## License Validator
-Create instance of `LicenseChecker` class and implement callback in your Activity source code. Constructor will take 4 parameters:
+Create instance of `LicenseChecker` class and implement callbacks in your Activity source code. Constructor takes 4 parameters:
 - Context of current activity
 - Your Base64 encoded License key from AndroidBozor Developer Console. This will be used to verify purchase signatures. 
 - Encryption salt. This will be used to encrypt cached license response on device
-- ILicenseHandler Interface implementation to handle validation results and errors
-See `LicensingActivity` of the example application for more information.
+- ILicenseHandler Interface implementation to handle validation results and errors. For more information, see the sample application demonstrating basic usage of `LicensingActivity` class.
 
 ```java
 private class LicenseHandler implements ILicenseHandler {
@@ -111,12 +111,11 @@ private class LicenseHandler implements ILicenseHandler {
 ```
 
 ## In-app Purchases
-Create instance of `BillingProcessor` class and implement callback in your activity source code. Constructor will take 4 parameters:
+Create instance of `BillingProcessor` class and implement callbacks in your activity source code. Constructor takes 4 parameters:
 - Context of current activity
 - Your Base64 encoded License key from AndroidBozor Developer Console. This will be used to verify purchase signatures. 
 - Encryption salt. This will be used to encrypt cached license response on device
-- IBillingHandler Interface implementation to handle purchase results and errors
-See `BillingActivity` of the example application for more information.
+- IBillingHandler Interface implementation to handle purchase results and errors. For more information, see the sample application demonstrating basic usage of `BillingActivity` class.
 ```java
 private class BillingHandler implements IBillingHandler{
     /**
